@@ -1,8 +1,5 @@
 ﻿using GraphDemo.Orders.Services;
 using GraphQL.Types;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace GraphDemo.Orders.Schema
 {
@@ -13,6 +10,18 @@ namespace GraphDemo.Orders.Schema
             Name = "Query";
 
             Field<ListGraphType<OrderType>>("orders", resolve: context => orderService.GetAsync());
+
+            FieldAsync<OrderType>("getOrderById",
+                arguments: new QueryArguments(new QueryArgument<IntGraphType> { Name = "id" }),
+                resolve: async context =>
+                 {
+                     var Id = context.GetArgument<int>("id");
+                     var result = await orderService.GetByIdAsync(Id);
+                     return result;
+                 }
+                );
         }
+       
+        
     }
 }
